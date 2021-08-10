@@ -19,38 +19,59 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.createSQLQuery("CREATE TABLE IF NOT EXISTS user(id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(60), " +
-                "lastname VARCHAR(60), age TINYINT, UNIQUE(id));").executeUpdate();
-        session.getTransaction().commit();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.createSQLQuery("CREATE TABLE IF NOT EXISTS user(id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(60), " +
+                    "lastname VARCHAR(60), age TINYINT, UNIQUE(id));").executeUpdate();
+            session.getTransaction().commit();
+        } finally {
+            if (session != null) session.close();
+        }
     }
 
     @Override
     public void dropUsersTable() {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.createSQLQuery("DROP TABLE IF EXISTS user;").executeUpdate();
-        session.getTransaction().commit();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.createSQLQuery("DROP TABLE IF EXISTS user;").executeUpdate();
+            session.getTransaction().commit();
+        } finally {
+            if (session != null) session.close();
+        }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        User user = new User(name, lastName, age);
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.save(user);
-        session.getTransaction().commit();
+        Session session = null;
+        try {
+            User user = new User(name, lastName, age);
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.save(user);
+            session.getTransaction().commit();
+        } finally {
+            if (session != null) session.close();
+        }
     }
 
     @Override
     public void removeUserById(long id) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        User user = (User) session.get(User.class, id);
-        session.delete(user);
-        session.getTransaction().commit();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            User user = (User) session.get(User.class, id);
+            session.delete(user);
+            session.getTransaction().commit();
+        } finally {
+            if (session != null) session.close();
+        }
     }
+
 
     @Override
     public List<User> getAllUsers() {
@@ -62,12 +83,18 @@ public class UserDaoHibernateImpl implements UserDao {
         return users;
     }
 
+
     @Override
     public void cleanUsersTable() {
-        String cleanTable = "TRUNCATE TABLE user;";
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.createSQLQuery(cleanTable).executeUpdate();
-        session.getTransaction().commit();
+        Session session = null;
+        try {
+            String cleanTable = "TRUNCATE TABLE user;";
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.createSQLQuery(cleanTable).executeUpdate();
+            session.getTransaction().commit();
+        } finally {
+            if (session != null) session.close();
+        }
     }
 }
